@@ -1,0 +1,50 @@
+- hosts: all
+  tasks: 
+  - file:
+      state: directory
+      path: "/dvd1"
+
+  - mount:
+      src: "/dev/cdrom"
+      path: "/dvd1"
+      state: mounted
+      fstype: "iso9660"
+
+  - yum_repository:
+     baseurl: "/dvd1/AppStream"
+     name: "mydvd1"
+     description: "my yum package"
+     gpgcheck: no
+
+  - yum_repository:
+     baseurl: "/dvd1/BaseOS"
+     name: "mydvd2"
+     description: "my yum dvd2 for package"
+     gpgcheck: no
+
+  - dnf:
+      state: present
+      name:
+          - docker 
+
+  - package:
+      name: "httpd"
+      state: present
+
+  - copy:
+      dest: "/var/www/html/index.html"
+      content: "HELLO THERE\n"
+
+  - service:
+      name: "httpd"
+      state: started
+      enabled: yes
+
+  - firewalld:
+      port: "80/tcp"
+      state: enabled
+      permanent: yes
+      immediate: yes
+
+
+
